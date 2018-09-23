@@ -1,0 +1,307 @@
+---
+title: "Hw02-Explore Gapminder and use dplyr"
+output: github_document
+---
+Load gapminder dataset and tidyverse and knitr packages.
+
+```{r, message=FALSE}
+library(gapminder)
+library(tidyverse)
+library(knitr)
+```
+
+## Small test of the data
+
+* **Is it a data.frame, a matrix, a vector, a list?**
+
+```{r}
+gapminder
+```
+
+Look at the structure of gapminder
+
+```{r}
+str(gapminder)
+```
+
+Obviously, gapminder is a data frame. More specifically, it is a "tibble".
+
+* **What is its class?**
+
+```{r}
+class(gapminder)
+```
+
+It seems like gapminder is a table and data frame.
+
+* **How many variables/columns?**
+
+```{r}
+ncol(gapminder)
+```
+
+* **How many rows/observations?**
+
+```{r}
+nrow(gapminder)
+```
+
+* **Can you get these facts about “extent” or “size” in more than one way? Can you imagine different functions being useful in different contexts?**
+
+`dim()` function can be used to get the number of rows and columns.
+
+```{r}
+dim(gapminder)
+```
+
+`summary()` and `str()` can help us get the content summary of gapminder. 
+
+```{r}
+summary(gapminder)
+str(gapminder)
+```
+
+Sometimes we just want to filter one column of gapminder. For example, we want to see how many countries included in gapminder. 
+
+```{r}
+length(unique(gapminder$country))
+```
+
+* **What data type is each variable?**
+
+```{r}
+typeof(gapminder$country)
+typeof(gapminder$continent)
+typeof(gapminder$year)
+typeof(gapminder$lifeExp)
+typeof(gapminder$pop)
+typeof(gapminder$gdpPercap)
+```
+
+## Explore individual variables
+
+**Categorical variable: country and continent**
+
+Let us look at possible values of continent. 
+
+```{r}
+unique(select(gapminder,continent))
+```
+5 continents are listed in the gapminder.
+
+Then we will explore the number of countries in each continent.
+
+```{r}
+group_by(gapminder,continent)%>%
+  summarise(numOfcountries=length(unique(country)))%>%
+  ggplot(aes(x=continent,weight=numOfcountries))+geom_bar()+
+  labs(title="The number of countries in each continent",x="continent",      y="number of countries")
+```
+
+Next, find out how many countries are listed?
+
+```{r}
+unique(select(gapminder,country))
+```
+142 countries are included in the gapminder.
+
+Then let us explore how many entries for each country in this dataset. Take Canada as an example:
+
+```{r}
+filter(gapminder,country=="Canada") %>%
+ select(country,year)
+```
+
+It shows that there are 12 entries for each country, every 5 years as an interval. 
+
+**Quantitative variables: lifeExp, year, gdpPercap**
+
+let's start with year.
+
+```{r}
+range(gapminder$year)
+```
+
+It shows that the data in the gapminder is from year 1952 to 2007.
+
+Next we explore gdpPercap.
+
+```{r}
+summary(gapminder$gdpPercap)
+```
+The range is from 241.2 to 113523.1. It is a big range! 
+
+Then we can make a table to demonstrate the gdpPercap summary in different continents from 1952 to 2007.
+
+```{r}
+group_by(gapminder,continent)%>%
+  summarize(minValue=min(gdpPercap), 
+            medianValue=median(gdpPercap),
+            maxValue=max(gdpPercap))%>%kable()
+```
+
+In 2007, we can find out which country has highest gdpPercap?
+
+```{r}
+filter(gapminder,year==2007)%>%
+  arrange(desc(gdpPercap))%>%
+  select(country,gdpPercap)%>%
+  head(10)
+```
+
+Norway has top gdpPercap in 2007!
+
+Then we can graph gdpPercap in 2007 as a histogram.
+
+```{r}
+filter(gapminder,year==2007)%>%
+  ggplot(aes(x=gdpPercap))+
+  geom_histogram(bins=50)+
+  labs(title="Histogram of gdpPercap in 2007")
+```
+
+Finally, we explore lifeExp variable.
+
+```{r}
+summary(gapminder$lifeExp)
+```
+
+like above, make a table to show mean values of lifeExp in 1952 and 2007 on different continents.
+
+```{r}
+filter(gapminder,year==1952|year==2007)%>%
+  group_by(continent,year)%>%
+  summarize(meanValue=mean(lifeExp))%>%
+  kable()
+```
+
+We can find that mean value of lifeExp in each continent has a big increase.
+
+Next, we will graph mean value of lifeExp in each continent from 1952 to 2007.
+
+```{r}
+group_by(gapminder,continent,year)%>%
+  summarise(meanVal=mean(lifeExp))%>%
+  ggplot(aes(x=year,y=meanVal,color=continent))+
+  geom_point()+
+  geom_smooth(se=FALSE)+
+  labs(title="mean value of lifeExp in each continent")
+```
+
+## **Explore various plot types**
+
+**Scatterplot**
+
+let's begin with pop variable.
+
+Firstly, we explore pop in each continent from 1952 to 2007.
+
+```{r}
+ggplot(gapminder,aes(x=continent,y=pop))+
+  geom_point(alpha=0.2,color="blue")+
+  stat_summary(fun.y=mean,color="red",geom = "point")+
+  labs(title="population in each continent from 1952 to 2007")
+```
+
+Some countries in Asia has quite a big population.
+
+Next, compare population of China and Canada.
+
+```{r}
+filter(gapminder,country=="China"|country=="Canada")%>%
+  ggplot(aes(x=year,y=pop,color=country))+geom_point(alpha=0.5)+
+  geom_smooth(se=FALSE)+
+  labs(title="population of China and Canada")
+```
+
+That is amazing! The population difference between two countries is quite big.
+
+Next variable we want to explore is gdpPercap vs year.
+
+We want to graph gdpPercap vs year in every continent.
+
+```{r}
+ggplot(gapminder,aes(x=year,y=gdpPercap))+
+  geom_point(color="blue")+
+  stat_summary(fun.y=mean,color="red",geom = "point")+
+  facet_wrap(~continent)+
+  labs(title="gdpPercap vs year in each continent")
+```
+
+Then we can look at gdpPercap in top 10 European countries in 2007.
+
+```{r}
+filter(gapminder,year==2007,continent=="Europe")%>%
+  arrange(desc(gdpPercap))%>%
+  head(10)%>%
+  select(country,gdpPercap)%>%
+  ggplot(aes(x=country,y=gdpPercap))+
+  geom_point(color="red")+
+  labs(title="gdpPercap vs year in top 10 European countries in 2007")
+```
+
+**Histogram and density plot**
+
+Let's see lifeExp distribution from 1952 to 2007.
+
+```{r}
+  ggplot(gapminder,aes(x=lifeExp,fill=continent))+
+  geom_histogram()+
+  labs(title="lifeExp distribution from 1952 to 2007")
+```
+
+Next look at the density plot of lifeExp distribution from 1952 to 2007.
+
+```{r}
+  ggplot(gapminder,aes(x=lifeExp,color=continent))+
+  geom_density()+
+  labs(title="lifeExp distribution from 1952 to 2007")
+```
+
+**Barplot**
+
+let's see the total population of each continent in 2007.
+
+```{r}
+filter(gapminder,year==2007)%>%
+  group_by(continent)%>%
+  summarise(total = sum(as.numeric(pop)))%>%
+  ggplot(aes(x=continent,weight=total))+
+  geom_bar()+labs(title="total population of each continent in 2007",x="continent",y="population")
+```
+
+Let's see total gdp of each continent in 2007.
+
+```{r}
+e<-filter(gapminder,year==2007)%>%
+   group_by(continent,country)%>%
+   summarise(country_gdp=pop*gdpPercap)%>%
+   group_by(continent)%>%
+   summarise(total_gdp=sum(country_gdp))
+ggplot(e,aes(x=continent,weight=total_gdp))+
+  geom_bar()+
+  labs(title="total gdp of each continent in 2007",x="continent",y="total gdp")
+```
+
+## **But I want to do more!**
+
+```{r}
+filter(gapminder,country==c("Rwanda", "Afghanistan"))%>%kable()
+```
+
+Obviously, this output is not correct, missing some information. 
+
+There are two ways to correct it. 
+
+First method:
+
+```{r}
+filter(gapminder,country=="Rwanda"|country=="Afghanistan")%>%kable()
+```
+
+Second method:
+
+```{r}
+filter(gapminder,country %in% c("Rwanda","Afghanistan"))%>%kable()
+```
+
