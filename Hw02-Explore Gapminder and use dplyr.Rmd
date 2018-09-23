@@ -95,7 +95,8 @@ Then we will explore the number of countries in each continent.
 group_by(gapminder,continent)%>%
   summarise(numOfcountries=length(unique(country)))%>%
   ggplot(aes(x=continent,weight=numOfcountries))+geom_bar()+
-  labs(title="The number of countries in each continent",x="continent",      y="number of countries")
+  labs(title="The number of countries in each continent",
+  x="continent",y="number of countries")
 ```
 
 Next, find out how many countries are listed?

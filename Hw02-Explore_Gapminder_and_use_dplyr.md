@@ -208,7 +208,8 @@ Then we will explore the number of countries in each continent.
 group_by(gapminder,continent)%>%
   summarise(numOfcountries=length(unique(country)))%>%
   ggplot(aes(x=continent,weight=numOfcountries))+geom_bar()+
-  labs(title="The number of countries in each continent",x="continent",      y="number of countries")
+  labs(title="The number of countries in each continent",
+  x="continent",y="number of countries")
 ```
 
 ![](Hw02-Explore_Gapminder_and_use_dplyr_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
