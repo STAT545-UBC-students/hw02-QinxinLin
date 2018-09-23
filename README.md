@@ -6,7 +6,9 @@
 
 ## Links
 
-* [Hw02-Explore Gapminder and use dplyr] ()
+* [Hw02-Explore Gapminder and use dplyr] (https://github.com/STAT545-UBC-students/hw02-QinxinLin/blob/master/Hw02-Explore_Gapminder_and_use_dplyr.md)
 
 * [Homework 2 source code](https://github.com/STAT545-UBC-students/hw02-QinxinLin/blob/master/Hw02-Explore%20Gapminder%20and%20use%20dplyr.Rmd)
  
+## Reflection
+
