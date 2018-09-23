@@ -12,4 +12,4 @@
  
 ## Reflection
 
-I finish this assignment in R studio by making an R markdown document and then kniting to github-document. In this assignment, I found [r4ds: transform chapter](http://r4ds.had.co.nz/transform.html) and [r4ds: Data visualisation](http://r4ds.had.co.nz/data-visualisation.html)are very useful. 
+I finish this assignment in R studio by making an R markdown document and then kniting to github-document. In this assignment, I found that [r4ds: transform chapter](http://r4ds.had.co.nz/transform.html) and [r4ds: Data visualisation](http://r4ds.had.co.nz/data-visualisation.html) are very useful. 
