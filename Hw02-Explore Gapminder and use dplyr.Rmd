@@ -199,7 +199,7 @@ Firstly, we explore pop in each continent from 1952 to 2007.
 
 ```{r}
 ggplot(gapminder,aes(x=continent,y=pop))+
-  geom_point(alpha=0.2,color="blue")+
+  geom_point(color="blue",alpha=0.2)+
   stat_summary(fun.y=mean,color="red",geom = "point")+
   labs(title="population in each continent from 1952 to 2007")
 ```
