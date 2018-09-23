@@ -223,7 +223,7 @@ We want to graph gdpPercap vs year in every continent.
 
 ```{r}
 ggplot(gapminder,aes(x=year,y=gdpPercap))+
-  geom_point(color="blue")+
+  geom_point(color="blue",alpha=0.5)+
   stat_summary(fun.y=mean,color="red",geom = "point")+
   facet_wrap(~continent)+
   labs(title="gdpPercap vs year in each continent")
